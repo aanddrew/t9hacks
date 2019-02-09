@@ -1,4 +1,5 @@
 import map
+import random
 
 class Game:
 
@@ -10,7 +11,10 @@ class Game:
 
 		self.player_health = 100
 		self.gold_coins = 0
+		self.player_damage = 0
+		self.enemy_damage = 0
 
+		self.gotAttacked = False
 		self.outputCode = 1
 		#self.outputCode is a determining factor in what the output message is:
 		"""
@@ -34,6 +38,8 @@ class Game:
 		self.current_room = self.m.rooms[self.x][self.y]
 
 	def input(self, input):
+		self.gotAttacked = False
+		passive = False
 		commands = []
 		temp = ""
 		#parse user commands as a string with commands separated by spaces
@@ -66,14 +72,25 @@ class Game:
 				self.outputCode = 0
 		elif commands[0] == "attack":
 			if (self.current_room.enemyAlive):
-				self.outputCode = 3
-				self.current_room.enemyAlive = False;
+				self.player_damage = random.randint(10,40)
+				self.current_room.enemy.health -= self.player_damage
+
+				if self.current_room.enemy.health <= 0:
+					self.outputCode = 3
+					self.current_room.enemyAlive = False;
+				else:
+					self.outputCode = 4
 			else:
 				self.outputCode = 2
 		elif commands[0] == "stats":
 			self.outputCode = 5
+			passive = True
 		else:
 			self.outputCode = False
+		if (not passive and self.current_room.enemyAlive):
+			self.gotAttacked = True
+			self.enemy_damage = self.current_room.enemy.getDamage()
+			self.player_health -= self.enemy_damage
 		self.update()
 
 
@@ -122,10 +139,13 @@ class Game:
 		elif self.outputCode == 3:
 			msg += "You killed the " + self.current_room.enemy.name + "!"
 		elif self.outputCode == 4:
-			msg += "He's still alive" #... implememt this
+			msg += "You did {} damage to the {}!\n".format(self.player_damage, self.current_room.enemy.name)
+			msg += "He's still alive with {} health!\n".format(self.current_room.enemy.health) #... implememt this
 		elif self.outputCode == 5:
 			msg += "You have {} health and {} gold coins.".format(self.player_health, self.gold_coins)
 
+		if (self.gotAttacked):
+			msg += "You took {} damage from the {}\n".format(self.enemy_damage, self.current_room.enemy.name)
 		#this is temporary, tells which location in the map the player is at
 		# msg += "You are now at {}, {}\n".format(self.x, self.y)
 		# if self.m.rooms[self.x][self.y] != None:

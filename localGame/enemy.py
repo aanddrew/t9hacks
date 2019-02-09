@@ -6,7 +6,7 @@ class Enemy:
 									'spider', \
 									'ghoul',\
 									'zombie'])
-		self.health = 10
+		self.health = 50
 
 	def getDamage(self):
 		return random.randint(6,20)
