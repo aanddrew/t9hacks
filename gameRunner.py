@@ -6,6 +6,6 @@ s = ''
 print(g.getOutput())
 while s != 'done':
 	while True:
-		s = raw_input ('what do you do?')
+		s = raw_input ('what do you do?\n')
 		g.input(s)
 		print(g.getOutput())

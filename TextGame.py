@@ -8,6 +8,9 @@ class Game:
 
 		self.m = map.Map(50)
 
+		self.player_health = 100
+		self.gold_coins = 0
+
 		self.outputCode = 1
 		#self.outputCode is a determining factor in what the output message is:
 		"""
@@ -16,11 +19,15 @@ class Game:
 			1 - move command, player is now in new room
 			2 - player attacked, but there was no enemy
 			3 - player attacked, killed enemy
+			4 - player attacked, enemy still alive
+			5 - show stats
 		"""
 		self.current_room = self.m.rooms[self.x][self.y]
 		while (self.current_room == None):
 			self.x += 1
 			self.current_room = self.m.rooms[self.x][self.y]
+		self.current_room.enemyAlive = False
+		self.current_room.enemy = None
 
 	def update(self):
 		# print("updating")
@@ -63,6 +70,8 @@ class Game:
 				self.current_room.enemyAlive = False;
 			else:
 				self.outputCode = 2
+		elif commands[0] == "stats":
+			self.outputCode = 5
 		else:
 			self.outputCode = False
 		self.update()
@@ -103,7 +112,7 @@ class Game:
 			msg += "\n"
 
 			if (self.current_room.enemyAlive):
-				msg += "Ah! There is an enemy here!\n"
+				msg += "Ah! There's a " + self.current_room.enemy.name + " in here!\n"
 
 		#smaller outputCodes
 		elif self.outputCode == 0:
@@ -111,7 +120,11 @@ class Game:
 		elif self.outputCode == 2:
 			msg += "There is nothing to attack here!"
 		elif self.outputCode == 3:
-			msg += "You killed the enemy"
+			msg += "You killed the " + self.current_room.enemy.name + "!"
+		elif self.outputCode == 4:
+			msg += "He's still alive" #... implememt this
+		elif self.outputCode == 5:
+			msg += "You have {} health and {} gold coins.".format(self.player_health, self.gold_coins)
 
 		#this is temporary, tells which location in the map the player is at
 		# msg += "You are now at {}, {}\n".format(self.x, self.y)
