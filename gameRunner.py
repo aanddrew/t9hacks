@@ -1,13 +1,11 @@
 from TextGame import *
 
-g = Game('player')
+g = Game()
 
 s = ''
 print(g.getOutput())
 while s != 'done':
-	valid = False
-	while not valid:
+	while True:
 		s = raw_input ('what do you do?')
-		valid = g.input(s)
-		g.update()
-	print(g.getOutput())
+		g.input(s)
+		print(g.getOutput())
