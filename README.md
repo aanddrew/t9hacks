@@ -10,7 +10,7 @@ import TextGame in your client file
 
 
 create an instance of game with:
-  game = TextGame.Game('player name')
+  game = TextGame.Game()
 
 
 You should display game.getOutput() before you enter the game's loop then:
