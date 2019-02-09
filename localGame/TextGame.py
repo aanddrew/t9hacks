@@ -101,6 +101,7 @@ class Game:
 					self.gained_coins = random.randint(1,3)
 				self.player_health += self.gained_health
 				self.gold_coins += self.gained_coins
+				self.current_room.treasure = False
 			else:
 				self.outputCode = 7
 
@@ -171,7 +172,6 @@ class Game:
 		elif self.outputCode == 5:
 			msg += "You have {} health and {} gold coins.".format(self.player_health, self.gold_coins)
 		elif self.outputCode == 6:
-			msg += "nice\n"
 			if (self.gained_health != 0):
 				msg += "You found a potion that healed you for {} health.\n".format(self.gained_health)
 			if (self.gained_coins != 0):
