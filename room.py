@@ -1,4 +1,5 @@
 import random
+import enemy
 
 class Room:
 
@@ -9,8 +10,13 @@ class Room:
 		self.explored = False
 		self.enemyAlive = random.choice([True,False])
 		self.treasure = random.choice([True,False])
-		self.message = "There's "
+
+		self.enemy = None
 		if (self.enemyAlive):
-			self.message += "an enemy in the room"
-		else:
-			self.message += "nothing in the room"
+			self.enemy = enemy.Enemy()
+
+		# self.message = "There's "
+		# if (self.enemyAlive):
+		# 	self.message += "an enemy in the room"
+		# else:
+		# 	self.message += "nothing in the room"

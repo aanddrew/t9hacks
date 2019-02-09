@@ -1,11 +1,11 @@
 from TextGame import *
 
-g = Game('player')
+g = Game()
 
 s = ''
+print(g.getOutput())
 while s != 'done':
-	valid = False
-	while not valid:
-		s = raw_input ('what do you do?')
-		valid = g.input(s)
-	print(g.getGameMsg())
+	while True:
+		s = raw_input ('what do you do?\n')
+		g.input(s)
+		print(g.getOutput())
