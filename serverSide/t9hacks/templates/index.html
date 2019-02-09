@@ -1,0 +1,15 @@
+<h1>Its working</h1>
+
+
+<form id="example" method="post" action="/">
+	{% csrf_token %}
+	{{form}}
+	<label for "user_id">Enter Name:</label>
+	<input id="name_id" type="text" name="User">
+	<label for "email_id">Enter Email:</label>
+	<input id="email_id" type="email" name="email">
+	<label for "score_id">Enter Score:</label>
+	<input id = "score_id" type="number" name="score">
+	<input type="submit" name="submit" value="Add Task" class="btn btn-primary" />
+
+</form>
