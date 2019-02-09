@@ -10,19 +10,13 @@ class Game:
 
 		self.m = map.Map(50)
 		self.current_room = self.m.rooms[self.x][self.y]
-
-		# for x in self.m.rooms:
-		# 	for y in x:
-		# 		if y != None:
-		# 			y.explored = True
-		# 			print(y.explored)
+		while (self.current_room == None):
+			self.x += 1
+			self.current_room = self.m.rooms[self.x][self.y]
 
 	def update(self):
-		print("updating")
+		# print("updating")
 		self.current_room = self.m.rooms[self.x][self.y]
-		if self.current_room.explored == False:
-			# print("room not explored")
-			self.current_room.explored = True
 
 	def input(self, input):
 		commands = []
@@ -37,6 +31,7 @@ class Game:
 				# print(temp)
 		commands.append(temp)
 
+		#select action given the commands user gave
 		if commands[0] == "move":
 			if len(commands) == 1:
 				return False
@@ -56,19 +51,44 @@ class Game:
 				return False
 		else:
 			return False
-		
-		self.update()
 
 
-	def getGameMsg(self):
+	def getOutput(self):
+		#we build the message based on different things
 		msg =""
+		#this does not work for some reason....
 		if self.current_room != None:
 			if self.current_room.explored:
 				msg += "You have been here before...\n"
 			else:
 				msg += "You have never been in this room.\n"
+				self.current_room.explored = True
 
-		msg += "You are now at {}, {}\n".format(self.x, self.y)
-		if self.m.rooms[self.x][self.y] != None:
-			msg += str(self.m.rooms[self.x][self.y].enemyAlive) + "\n"
+		#tell user which directions they can move
+		msg += "There are doors to the "
+		directions = []
+		if self.m.rooms[self.x+1][self.y] != None:
+			directions.append("east")
+		if self.m.rooms[self.x][self.y-1] != None:
+			directions.append("north")
+		if self.m.rooms[self.x-1][self.y] != None:
+			directions.append("west")
+		if self.m.rooms[self.x][self.y+1] != None:
+			directions.append("south")
+		for i, dir in enumerate(directions):
+			if (i != len(directions) and i != len(directions) -1):
+				msg += dir
+				if len(directions) != 2:
+					msg += ","
+				msg += " "
+			elif i == len(directions) - 1 and len(directions) != 1:
+				msg += "and " + dir
+			else:
+				msg += dir + "."
+		msg += "\n"
+
+		#this is temporary, tells which location in the map the player is at
+		# msg += "You are now at {}, {}\n".format(self.x, self.y)
+		# if self.m.rooms[self.x][self.y] != None:
+		# 	msg += str(self.m.rooms[self.x][self.y].enemyAlive) + "\n"
 		return msg
