@@ -14,7 +14,11 @@ class Game:
 		self.player_damage = 0
 		self.enemy_damage = 0
 
+		self.gained_health = 0
+		self.gained_coins = 0
+
 		self.gotAttacked = False
+		self.attackerName = ""
 		self.outputCode = 1
 		#self.outputCode is a determining factor in what the output message is:
 		"""
@@ -25,6 +29,8 @@ class Game:
 			3 - player attacked, killed enemy
 			4 - player attacked, enemy still alive
 			5 - show stats
+			6 - loot the treasure
+			7 - loot the treasure, but there is no treasure in here
 		"""
 		self.current_room = self.m.rooms[self.x][self.y]
 		while (self.current_room == None):
@@ -53,6 +59,7 @@ class Game:
 		commands.append(temp.lower())
 
 		#select action given the commands user gave
+		#moving 
 		if commands[0] == "move":
 			if len(commands) == 1:
 				self.outputCode = 0
@@ -70,6 +77,7 @@ class Game:
 				self.outputCode = 1
 			else: 
 				self.outputCode = 0
+		#attacking
 		elif commands[0] == "attack":
 			if (self.current_room.enemyAlive):
 				self.player_damage = random.randint(10,40)
@@ -82,15 +90,31 @@ class Game:
 					self.outputCode = 4
 			else:
 				self.outputCode = 2
+		elif commands[0] == "treasure":
+			if (self.current_room.treasure):
+				self.outputCode = 6
+				self.gained_health = 0
+				self.gained_coins = 0
+				if random.choice([True,False]):
+					self.gained_health = random.randint(5,15)
+				if random.choice([True,False]):
+					self.gained_coins = random.randint(1,3)
+				self.player_health += self.gained_health
+				self.gold_coins += self.gained_coins
+			else:
+				self.outputCode = 7
+
+		#displaying stats
 		elif commands[0] == "stats":
 			self.outputCode = 5
 			passive = True
 		else:
 			self.outputCode = False
-		if (not passive and self.current_room.enemyAlive):
+		if (not passive and self.current_room.enemyAlive and self.outputCode != 0):
 			self.gotAttacked = True
 			self.enemy_damage = self.current_room.enemy.getDamage()
 			self.player_health -= self.enemy_damage
+			self.attackerName = self.current_room.enemy.name
 		self.update()
 
 
@@ -131,23 +155,29 @@ class Game:
 			if (self.current_room.enemyAlive):
 				msg += "Ah! There's a " + self.current_room.enemy.name + " in here!\n"
 
+			if (self.current_room.treasure):
+				msg += "There's a treasure chest in here!\n"
+
 		#smaller outputCodes
 		elif self.outputCode == 0:
-			msg += "Invalid input."
+			msg += "Invalid input.\n"
 		elif self.outputCode == 2:
-			msg += "There is nothing to attack here!"
+			msg += "There is nothing to attack here!\n"
 		elif self.outputCode == 3:
-			msg += "You killed the " + self.current_room.enemy.name + "!"
+			msg += "You killed the " + self.current_room.enemy.name + "!\n"
 		elif self.outputCode == 4:
 			msg += "You did {} damage to the {}!\n".format(self.player_damage, self.current_room.enemy.name)
-			msg += "He's still alive with {} health!\n".format(self.current_room.enemy.health) #... implememt this
+			msg += "The {} still alive with {} health!\n".format(self.current_room.enemy.name, self.current_room.enemy.health) #... implememt this
 		elif self.outputCode == 5:
 			msg += "You have {} health and {} gold coins.".format(self.player_health, self.gold_coins)
-
+		elif self.outputCode == 6:
+			msg += "nice\n"
+			if (self.gained_health != 0):
+				msg += "You found a potion that healed you for {} health.\n".format(self.gained_health)
+			if (self.gained_coins != 0):
+				msg += "You found {} gold coins.\n".format(self.gained_coins)
+		elif self.outputCode == 7:
+			msg += "There is no treasure in here!\n"
 		if (self.gotAttacked):
-			msg += "You took {} damage from the {}\n".format(self.enemy_damage, self.current_room.enemy.name)
-		#this is temporary, tells which location in the map the player is at
-		# msg += "You are now at {}, {}\n".format(self.x, self.y)
-		# if self.m.rooms[self.x][self.y] != None:
-		# 	msg += str(self.m.rooms[self.x][self.y].enemyAlive) + "\n"
+			msg += "You took {} damage from the {}\n".format(self.enemy_damage, self.attackerName)
 		return msg
