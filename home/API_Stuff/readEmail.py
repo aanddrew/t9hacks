@@ -6,7 +6,7 @@ from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 import base64
-import json
+import json:
 from apiclient import errors
 # If modifying these scopes, delete the file token.pickle.
 
@@ -16,6 +16,7 @@ class readEmailMaster:
     self.service = 0
     self.SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
     self.messageID = 0
+    self.lastAddress = ""
   def decodeBase64(self,email64):
       emailASCII = base64.b64decode(email64)
       return emailASCII
@@ -69,7 +70,6 @@ class readEmailMaster:
         page_token = response['nextPageToken']
         response = service.users().messages().list(userId=user_id, q=query, pageToken=page_token).execute()
         messages.extend(response['messages'])
-
       return messages
     except errors.HttpError:
       print('An error occurred: %s') % error
