@@ -26,6 +26,7 @@ class Game:
 		"""
 			Here are the codes:
 			0 - invalid input
+			0.5 - move command, no direction parameter
 			1 - move command, player is now in new room
 			2 - player attacked, but there was no enemy
 			3 - player attacked, killed enemy
@@ -67,7 +68,7 @@ class Game:
 		#moving 
 		if commands[0] == "move":
 			if len(commands) == 1:
-				self.outputCode = 0
+				self.outputCode = 0.5
 			elif commands[1] == "north" and self.m.rooms[self.x][self.y-1] != None:
 				self.y -= 1
 				self.outputCode = 1
@@ -124,11 +125,34 @@ class Game:
 			self.attackerName = self.current_room.enemy.name
 		self.update()
 
+	def getDoorsMsg(self):
+		msg = "There are doors to the "
+		directions = []
+		if self.m.rooms[self.x+1][self.y] != None:
+			directions.append("east")
+		if self.m.rooms[self.x][self.y-1] != None:
+			directions.append("north")
+		if self.m.rooms[self.x-1][self.y] != None:
+			directions.append("west")
+		if self.m.rooms[self.x][self.y+1] != None:
+			directions.append("south")
+		for i, dir in enumerate(directions):
+			if (i != len(directions) and i != len(directions) -1):
+				msg += dir
+				if len(directions) != 2:
+					msg += ","
+				msg += " "
+			elif i == len(directions) - 1 and len(directions) != 1:
+				msg += "and " + dir
+			else:
+				msg += dir + "."
+		msg += "\n"
+		return msg
 
 	def getOutput(self):
 		#we build the message based on different things
 		msg =""
-		if (self.outputCode == 1):
+		if (self.outputCode == 1 or self.outputCode == 0.5):
 			if self.current_room != None:
 				if self.current_room.explored:
 					msg += "You have been here before...\n"
@@ -137,33 +161,16 @@ class Game:
 					self.current_room.explored = True
 
 			#tell user which directions they can move
-			msg += "There are doors to the "
-			directions = []
-			if self.m.rooms[self.x+1][self.y] != None:
-				directions.append("east")
-			if self.m.rooms[self.x][self.y-1] != None:
-				directions.append("north")
-			if self.m.rooms[self.x-1][self.y] != None:
-				directions.append("west")
-			if self.m.rooms[self.x][self.y+1] != None:
-				directions.append("south")
-			for i, dir in enumerate(directions):
-				if (i != len(directions) and i != len(directions) -1):
-					msg += dir
-					if len(directions) != 2:
-						msg += ","
-					msg += " "
-				elif i == len(directions) - 1 and len(directions) != 1:
-					msg += "and " + dir
-				else:
-					msg += dir + "."
-			msg += "\n"
+			msg+= self.getDoorsMsg()
 
 			if (self.current_room.enemyAlive):
 				msg += "Ah! There's a " + self.current_room.enemy.name + " in here!\n"
 
 			if (self.current_room.treasure):
 				msg += "There's a treasure chest in here!\n"
+
+		# elif self.outputCode == 0.5:
+		# 	msg += self.getDoorsMsg()
 
 		#smaller outputCodes
 		elif self.outputCode == 0:
