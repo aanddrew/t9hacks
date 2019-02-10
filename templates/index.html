@@ -42,6 +42,7 @@
 
 
 		<form method="post" action="../sendcommand/">
+			{% csrf_token %}
 			<label for "command">Enter your response here</label><br>
 			<input type="text" name="command"><br>
 			<input type="submit" name="submit" value="enter command" class="btn btn-primary" />
