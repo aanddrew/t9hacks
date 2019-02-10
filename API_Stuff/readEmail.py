@@ -76,11 +76,29 @@ class readEmailMaster:
     
   def actuallyRead(self):
     msgs = self.ListMessagesMatchingQuery(self.service , "me")
+    outputMsgs = []
+    #Traverse alls messages
     for x in msgs:
-        msg_ID = x['id']
-        msg= self.service.users().messages().get(userId='me', id=msg_ID).execute()
-        email64 = json.dumps(msg['payload']['parts'][0]['body']['data'], sort_keys=True, indent=4, separators=(',', ': '))
-        self.decodeBase64(email64)
+      msg_ID = x['id'] #Get the ID in order to get more data
+      msg= self.service.users().messages().get(userId='me', id=msg_ID).execute() #Actual json
+      
+
+      headerLvl= 0;
+      for i in msg['payload']['headers']:
+        headerLvl += 1
+        #Locating where subject is
+        if (i['value']=="Sendgame Output"):
+          break
+      
+      if (msg['payload']["headers"][headerLvl-1]['value']=="Sendgame Output"):
+        outputMsgs.append(msg)
+    
+    latestmsg = outputMsgs[0]
+    for i in outputMsgs: #Traverse all messages with Sendgame Output
+      if (int(i["internalDate"]) > int(latestmsg["internalDate"])):
+        latestmsg = i
+    email64 = json.dumps(latestmsg['payload']['parts'][0]['body']['data'], sort_keys=True, indent=4, separators=(',', ': '))
+    self.decodeBase64(email64)
     return msgs;
 
 if __name__ == '__main__':
