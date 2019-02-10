@@ -1,5 +1,5 @@
 from django.shortcuts import render
-
+from gameControls.runner import init
 from django.views.generic import ListView, TemplateView
 
 from .models import *
@@ -23,6 +23,7 @@ def add_User_Form_Submission(request):
     print("yooooooo")
     _name = request.POST["name"]
     _email = request.POST["email"]
+    init(_email)
     _kills = 0
     _tokens = 0
     NewUser = User(name = _name, email = _email, kills = _kills, tokens = _tokens)
