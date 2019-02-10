@@ -6,7 +6,7 @@ from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 import base64
-import json
+import json:
 from apiclient import errors
 # If modifying these scopes, delete the file token.pickle.
 
@@ -15,6 +15,8 @@ class readEmailMaster:
   def __init__(self):
     self.service = 0
     self.SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
+    self.messageID = 0
+    self.lastAddress = ""
   def decodeBase64(self,email64):
       emailASCII = base64.b64decode(email64)
       return emailASCII
@@ -68,41 +70,45 @@ class readEmailMaster:
         page_token = response['nextPageToken']
         response = service.users().messages().list(userId=user_id, q=query, pageToken=page_token).execute()
         messages.extend(response['messages'])
-
       return messages
     except errors.HttpError:
       print('An error occurred: %s') % error
 
-    
+  #This function verify's that the email is part of the game by checking the subject line
   def actuallyRead(self):
-    msgs = self.ListMessagesMatchingQuery(self.service , "me")
+    msgs = self.ListMessagesMatchingQuery(self.service , "me") #Gets list of all messages in inbox
     outputMsgs = []
     #Traverse alls messages
     for x in msgs:
       msg_ID = x['id'] #Get the ID in order to get more data
       msg= self.service.users().messages().get(userId='me', id=msg_ID).execute() #Actual json
-      
+      if(msg["labelIds"][-1]!="INBOX"):
+        continue
 
       headerLvl= 0;
+      #Traverses message data to find the required Sendgame subject
       for i in msg['payload']['headers']:
         headerLvl += 1
-        #Locating where subject is
+        #Verifying subject is Sendgame Output and adding to 
         if (i['value']=="Sendgame Output"):
-          break
-      
-      if (msg['payload']["headers"][headerLvl-1]['value']=="Sendgame Output"):
-        outputMsgs.append(msg)
+          outputMsgs.append(msg)
+        
     
     latestmsg = outputMsgs[0]
     for i in outputMsgs: #Traverse all messages with Sendgame Output
       if (int(i["internalDate"]) > int(latestmsg["internalDate"])):
         latestmsg = i
+    #Sets unique ID
+    self.messageID = latestmsg['id']
     email64 = json.dumps(latestmsg['payload']['parts'][0]['body']['data'], sort_keys=True, indent=4, separators=(',', ': '))
-    Final = self.decodeBase64(email64)
-    # print(Final)
-    return Final;
+    final = self.decodeBase64(email64)
+    return final;
+
+  #Gets message ID of latest message
+  def getLastId(self):  
+      return self.messageID
 
 if __name__ == '__main__':
     yeet = readEmailMaster()
     yeet.Authentication()
-    yeet.actuallyRead()
+    print(yeet.actuallyRead(), yeet.getLastId())
