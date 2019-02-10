@@ -13,6 +13,21 @@ class HomePageView(ListView):
     model = User
     template_name = 'index.html'
     context_obect_name = 'all_email_list'
+
+def add_User_Form_Submission(request):
+    print("yooooooo")
+    _name = request.POST["name"]
+    _email = request.POST["email"]
+
+    NewUser = User(name = _name, email = _email, score = 0)
+
+    NewUser.save()
+
+    return render(request, 'index.html')
+
+
+
+
 '''
 def showform(request):
     form = UserForm(request.POST or None)

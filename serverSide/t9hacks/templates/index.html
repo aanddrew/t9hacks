@@ -1,15 +1,38 @@
-<h1>Its working</h1>
+<!DOCTYPE html>
+<html>
 
+<head>
+	<title>Email Adventures</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+</head>
 
-<form id="example" method="post" action="/">
-	{% csrf_token %}
-	{{form}}
-	<label for "user_id">Enter Name:</label>
-	<input id="name_id" type="text" name="User">
-	<label for "email_id">Enter Email:</label>
-	<input id="email_id" type="email" name="email">
-	<label for "score_id">Enter Score:</label>
-	<input id = "score_id" type="number" name="score">
-	<input type="submit" name="submit" value="Add Task" class="btn btn-primary" />
+<body>
+	<nav class="navbar navbar-inverse">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="#">Email Adventures</a>
+			</div>
+			<ul class="nav navbar-nav">
+				<li class="active"><a href="">Home</a></li>
+				<li><a href="#">Profile</a></li>
+			</ul>
+		</div>
+	</nav>
+	<div class="text-center container">
+		<h1>Email Adventures</h1>
+	</div>
+	<div class="container text-center">
+		<form id="example" method="post" action="../addUser/">
+			{% csrf_token %}
+			{{form}}
+			<label for "user_id">Enter Name:</label><br>
+			<input id="name_id" type="text" name="name"><br>
+			<label for "email_id">Enter Email:</label><br>
+			<input id="email_id" type="email" name="email"><br>
+			<input type="submit" name="submit" value="Start Game" class="btn btn-primary" />
 
-</form>
+		</form>
+	</div>
+</body>
+
+</html>
