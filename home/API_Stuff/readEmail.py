@@ -17,7 +17,7 @@ class readEmailMaster:
     self.SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
   def decodeBase64(self,email64):
       emailASCII = base64.b64decode(email64)
-      print(emailASCII)
+      return emailASCII
 
   def Authentication(self):
     """Shows basic usage of the Gmail API.
@@ -73,35 +73,35 @@ class readEmailMaster:
     except errors.HttpError:
       print('An error occurred: %s') % error
 
-    
+  #This function verify's that the email is part of the game by checking the subject line
   def actuallyRead(self):
-    msgs = self.ListMessagesMatchingQuery(self.service , "me")
+    msgs = self.ListMessagesMatchingQuery(self.service , "me") #Gets list of all messages in inbox
     outputMsgs = []
     #Traverse alls messages
     for x in msgs:
       msg_ID = x['id'] #Get the ID in order to get more data
       msg= self.service.users().messages().get(userId='me', id=msg_ID).execute() #Actual json
-      
+      if(msg["labelIds"][-1]!="INBOX"):
+        continue
 
       headerLvl= 0;
+      #Traverses message data to find the required Sendgame subject
       for i in msg['payload']['headers']:
         headerLvl += 1
-        #Locating where subject is
+        #Verifying subject is Sendgame Output and adding to 
         if (i['value']=="Sendgame Output"):
-          break
-      
-      if (msg['payload']["headers"][headerLvl-1]['value']=="Sendgame Output"):
-        outputMsgs.append(msg)
+          outputMsgs.append(msg)
+        
     
     latestmsg = outputMsgs[0]
     for i in outputMsgs: #Traverse all messages with Sendgame Output
       if (int(i["internalDate"]) > int(latestmsg["internalDate"])):
         latestmsg = i
     email64 = json.dumps(latestmsg['payload']['parts'][0]['body']['data'], sort_keys=True, indent=4, separators=(',', ': '))
-    self.decodeBase64(email64)
-    return msgs;
+    final = self.decodeBase64(email64)
+    return final;
 
 if __name__ == '__main__':
     yeet = readEmailMaster()
     yeet.Authentication()
-    yeet.actuallyRead()
+    print(yeet.actuallyRead())
