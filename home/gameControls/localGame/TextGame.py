@@ -1,4 +1,4 @@
-import map
+from . import map
 import random
 
 class Game:
@@ -103,7 +103,7 @@ class Game:
 				self.gained_health = 0
 				self.gained_coins = 0
 				if random.choice([True,False]):
-					self.gained_health = random.randint(5,15)
+					self.gained_health = random.randint(10,20)
 				if random.choice([True,False]):
 					self.gained_coins = random.randint(1,3)
 				self.player_health += self.gained_health

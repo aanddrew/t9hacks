@@ -14,7 +14,7 @@
 			</div>
 			<ul class="nav navbar-nav">
 				<li class="active"><a href="">Home</a></li>
-				<li><a href="#">Profile</a></li>
+				<li><a href="#">Instructions</a></li>
 			</ul>
 		</div>
 	</nav>
@@ -31,6 +31,20 @@
 			<input id="email_id" type="email" name="email"><br>
 			<input type="submit" name="submit" value="Start Game" class="btn btn-primary" />
 
+		</form>
+	</div>
+	<div class="container text-center">
+		<h1>Instructions:</h1>
+		<h3>{{ gameResponse }}</h3>
+
+	</div>
+	<div class="text-center container">
+
+
+		<form method="post" action="../sendcommand/">
+			<label for "command">Enter your response here</label><br>
+			<input type="text" name="command"><br>
+			<input type="submit" name="submit" value="enter command" class="btn btn-primary" />
 		</form>
 	</div>
 </body>
