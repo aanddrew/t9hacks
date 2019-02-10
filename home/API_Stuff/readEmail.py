@@ -15,6 +15,7 @@ class readEmailMaster:
   def __init__(self):
     self.service = 0
     self.SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
+    self.messageID = 0
   def decodeBase64(self,email64):
       emailASCII = base64.b64decode(email64)
       return emailASCII
@@ -97,11 +98,17 @@ class readEmailMaster:
     for i in outputMsgs: #Traverse all messages with Sendgame Output
       if (int(i["internalDate"]) > int(latestmsg["internalDate"])):
         latestmsg = i
+    #Sets unique ID
+    self.messageID = latestmsg['id']
     email64 = json.dumps(latestmsg['payload']['parts'][0]['body']['data'], sort_keys=True, indent=4, separators=(',', ': '))
     final = self.decodeBase64(email64)
     return final;
 
+  #Gets message ID of latest message
+  def getLastId(self):  
+      return self.messageID
+
 if __name__ == '__main__':
     yeet = readEmailMaster()
     yeet.Authentication()
-    print(yeet.actuallyRead())
+    print(yeet.actuallyRead(), yeet.getLastId())
