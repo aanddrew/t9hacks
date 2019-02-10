@@ -9,4 +9,5 @@ must run with python3
 dependencies:
 
 pip3 install sendgrid
-pip install --upgrade google-api-python-client
+
+pip3 install --upgrade google-api-python-client
