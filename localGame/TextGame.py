@@ -11,6 +11,8 @@ class Game:
 
 		self.player_health = 100
 		self.gold_coins = 0
+		self.kill_count = 0
+
 		self.player_damage = 0
 		self.enemy_damage = 0
 
@@ -38,6 +40,9 @@ class Game:
 			self.current_room = self.m.rooms[self.x][self.y]
 		self.current_room.enemyAlive = False
 		self.current_room.enemy = None
+
+	def done(self):
+		return self.player_health <= 0
 
 	def update(self):
 		# print("updating")
@@ -86,6 +91,7 @@ class Game:
 				if self.current_room.enemy.health <= 0:
 					self.outputCode = 3
 					self.current_room.enemyAlive = False;
+					self.kill_count += 1
 				else:
 					self.outputCode = 4
 			else:
@@ -172,10 +178,15 @@ class Game:
 		elif self.outputCode == 5:
 			msg += "You have {} health and {} gold coins.".format(self.player_health, self.gold_coins)
 		elif self.outputCode == 6:
+			foundSomething = False
 			if (self.gained_health != 0):
 				msg += "You found a potion that healed you for {} health.\n".format(self.gained_health)
+				foundSomething = True
 			if (self.gained_coins != 0):
 				msg += "You found {} gold coins.\n".format(self.gained_coins)
+				foundSomething = True
+			if not foundSomething:
+				msg += "The treasure chest was empty... :(\n"
 		elif self.outputCode == 7:
 			msg += "There is no treasure in here!\n"
 		if (self.gotAttacked):
