@@ -1,4 +1,4 @@
-import room
+from . import room
 import random
 
 class Map:

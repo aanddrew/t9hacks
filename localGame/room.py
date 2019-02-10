@@ -1,5 +1,5 @@
 import random
-import enemy
+from . import enemy
 
 class Room:
 

@@ -1,4 +1,4 @@
-import map
+from . import map
 import random
 
 class Game:
